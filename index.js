@@ -2,13 +2,14 @@ const { MongoClient, ServerApiVersion } = require('mongodb');
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config()
-const port = 3000;
+const port = process.env.PORT || 5000;
+
 
 // J0Y2udRo6CEtwF4S
 
 const app = express();
-app.use(cors());
 app.use(express.json());
+app.use(cors());
 
 
 
@@ -28,6 +29,19 @@ async function run() {
         // Connect the client to the server	(optional starting in v4.7)
         await client.connect();
         // Send a ping to confirm a successful connection
+        const database = client.db('bloodDonation');
+        const userCollection = database.collection('user');
+
+        app.post('/users', async (req, res) => {
+            const userInfo = req.body;
+            console.log(userInfo)
+            userInfo.role = "Buyer";
+            userInfo.createdAt = new Date();
+            const result = await userCollection.insertOne(userInfo);
+            res.send(result)
+
+        })
+
 
 
         await client.db("admin").command({ ping: 1 });
