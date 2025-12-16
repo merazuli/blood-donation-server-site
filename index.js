@@ -32,6 +32,7 @@ async function run() {
         const database = client.db('bloodDonation');
         const userCollection = database.collection('user');
 
+        // post method 
         app.post('/users', async (req, res) => {
             const userInfo = req.body;
             console.log(userInfo)
@@ -39,6 +40,18 @@ async function run() {
             userInfo.createdAt = new Date();
             const result = await userCollection.insertOne(userInfo);
             res.send(result)
+
+        })
+        // get method 
+        app.get('/users/role/:email', async (req, res) => {
+            const email = req.params.email
+
+            // 1st email mongodb er 2nd backend 
+            const query = { email: email }
+            const result = await userCollection.findOne(query)
+            console.log(result)
+            res.send(result)
+
 
         })
 
