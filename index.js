@@ -55,11 +55,22 @@ async function run() {
 
         })
 
-        // donor request 
+        // donor request
 
+
+        //  post method
         app.post('/donations', async (req, res) => {
             const data = req.body;
             const result = await donationsCollection.insertOne(data);
+            res.send(result)
+        })
+        //    get method
+
+        app.get('/admin/donations/:email', async (req, res) => {
+            const email = req.params.email;
+            console.log(email)
+            const query = { requesterEmail: email }
+            const result = await donationsCollection.find(query).toArray();
             res.send(result)
         })
 
