@@ -11,6 +11,11 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+// const serviceAccount = require("./firebase-admin-key.json");
+
+const decoded = Buffer.from(process.env.FB_SERVICE_KEY, 'base64').toString('utf8')
+const serviceAccount = JSON.parse(decoded);
+
 
 
 const uri = "mongodb+srv://blooddonation:J0Y2udRo6CEtwF4S@cluster0.gzvuhez.mongodb.net/?appName=Cluster0";
@@ -56,9 +61,8 @@ async function run() {
 
         })
 
+
         // donor request
-
-
         //  post method
         app.post('/requests', async (req, res) => {
             const data = req.body;
