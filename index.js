@@ -36,7 +36,8 @@ async function run() {
         // post method 
         app.post('/users', async (req, res) => {
             const userInfo = req.body;
-            userInfo.status = "Active"
+            userInfo.status = "Active";
+            userInfo.role = "Donor"
             userInfo.createdAt = new Date();
             const result = await userCollection.insertOne(userInfo);
             res.send(result)
@@ -59,14 +60,15 @@ async function run() {
 
 
         //  post method
-        app.post('/donations', async (req, res) => {
+        app.post('/requests', async (req, res) => {
             const data = req.body;
+            data.createdAt = new Date();
             const result = await donationsCollection.insertOne(data);
             res.send(result)
         })
         //    get method
 
-        app.get('/admin/donations/:email', async (req, res) => {
+        app.get('/admin/requests/:email', async (req, res) => {
             const email = req.params.email;
             console.log(email)
             const query = { requesterEmail: email }
