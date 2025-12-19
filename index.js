@@ -60,6 +60,7 @@ async function run() {
         const userCollection = database.collection('user');
         const donationsCollection = database.collection('donationRequest');
 
+        // users related api here 
         // post method 
         app.post('/users', async (req, res) => {
             const userInfo = req.body;
@@ -70,7 +71,14 @@ async function run() {
             res.send(result)
 
         })
-        // get method 
+        // get method all users 
+
+        app.get('/users', verifyFBToken, async (req, res) => {
+            const result = await userCollection.find().toArray();
+            res.status(200).send(result);
+        })
+
+        // get method role 
         app.get('/users/role/:email', async (req, res) => {
             const email = req.params.email
 
@@ -82,9 +90,23 @@ async function run() {
 
 
         })
+        // update active status api here 
+        app.patch('/update/user/status', verifyFBToken, async (req, res) => {
+            const { email, status } = req.query;
+            const query = { email: email };
+
+            const updateStatus = {
+                $set: {
+                    status: status,
+                }
+            }
+            const result = await userCollection.updateOne(query, updateStatus);
+            res.send(result);
+
+        })
 
 
-        // donor request
+        // donor request api
         //  post method
         app.post('/requests', verifyFBToken, async (req, res) => {
             const data = req.body;
