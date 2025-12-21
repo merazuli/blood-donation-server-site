@@ -32,7 +32,7 @@ const verifyFBToken = async (req, res, next) => {
     try {
         const idToken = token.split(' ')[1]
         const decoded = await admin.auth().verifyIdToken(idToken);
-        console.log("decoded Info", decoded)
+        // console.log("decoded Info", decoded)
         req.decoded_email = decoded.email;
         next();
     }
@@ -63,6 +63,7 @@ async function run() {
         const database = client.db('bloodDonation');
         const userCollection = database.collection('user');
         const donationsCollection = database.collection('donationRequest');
+        const paymentsCollection = database.collection('payments');
 
         // users related api here 
         // post method 
@@ -89,7 +90,7 @@ async function run() {
             // 1st email mongodb er 2nd backend 
             const query = { email: email }
             const result = await userCollection.findOne(query)
-            console.log(result)
+            // console.log(result)
             res.send(result)
 
 
@@ -165,6 +166,35 @@ async function run() {
 
             });
             res.send({ url: session.url })
+        })
+        // payment success post db 
+        app.post('/success-payment', async (req, res) => {
+            const { session_id } = req.query;
+            const session = await stripe.checkout.sessions.retrieve(
+                session_id
+            );
+            console.log(session);
+            const transactionId = session.payment_intent;
+            // no duplicate 
+            const isPaymentExit = await paymentsCollection.findOne({ transactionId });
+            if (isPaymentExit) {
+                return res.status(400).send('Already Exist')
+            }
+
+            if (session.payment_status == "paid") {
+                const paymentInfo = {
+                    amount: session.amount_total / 100,
+                    currency: session.currency,
+                    donarEmail: session.customer_email,
+                    transactionId,
+                    payment_status: session.payment_status,
+                    paidAt: new Date(),
+                }
+                const result = await paymentsCollection.insertOne(paymentInfo);
+                return res.send(result)
+            }
+
+
         })
 
 
