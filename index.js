@@ -106,7 +106,7 @@ async function run() {
         })
 
 
-        // donor request api
+        // donor request api 
         //  post method
         app.post('/requests', verifyFBToken, async (req, res) => {
             const data = req.body;
@@ -116,12 +116,20 @@ async function run() {
         })
         //    get method
 
-        app.get('/admin/requests/:email', async (req, res) => {
-            const email = req.params.email;
-            console.log(email)
-            const query = { requesterEmail: email }
-            const result = await donationsCollection.find(query).toArray();
-            res.send(result)
+        app.get('/my-requests', verifyFBToken, async (req, res) => {
+            const email = req.decoded_email;
+            const size = Number(req.query.size);
+            const page = Number(req.query.page);
+            const query = { requesterEmail: email };
+            const result = await donationsCollection
+                .find(query)
+                .limit(size)
+                .skip(size * page)
+                .toArray();
+
+            const totalRequest = await donationsCollection.countDocuments(query);
+            res.send({ request: result, totalRequest })
+
         })
 
 
