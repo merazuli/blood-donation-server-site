@@ -109,6 +109,26 @@ async function run() {
             res.send(result);
 
         })
+        // search api here 
+        app.get('/search-request', async (req, res) => {
+            const { bloodGroup, district, upazila } = req.query;
+            const query = {};
+            if (!query) {
+                return;
+            }
+            if (bloodGroup) {
+                query.bloodGroup = bloodGroup;
+            }
+            if (district) {
+                query.recipientDistrict = district;
+            }
+            if (upazila) {
+                query.recipientUpazila = upazila;
+            }
+            const result = await donationsCollection.find(query).toArray();
+            console.log(result)
+            res.send(result)
+        });
 
 
         // donor request api 
