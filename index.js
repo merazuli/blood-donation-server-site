@@ -1,4 +1,4 @@
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config()
@@ -139,8 +139,13 @@ async function run() {
             const result = await donationsCollection.insertOne(data);
             res.send(result)
         })
-        //    get method
 
+        // get all request 
+        app.get('/all-requests', async (req, res) => {
+            const result = await donationsCollection.find().toArray();
+            res.send(result)
+        })
+        //    get method
         app.get('/my-requests', verifyFBToken, async (req, res) => {
             const email = req.decoded_email;
             const size = Number(req.query.size);
@@ -156,6 +161,15 @@ async function run() {
             res.send({ request: result, totalRequest })
 
         })
+        // get single data 
+        app.get('/view-details/:id', async (req, res) => {
+            const { id } = req.params;
+
+
+            const result = await donationsCollection.findOne({ _id: new ObjectId(id) });
+            res.send(result);
+        });
+
 
         // payment api stripe 
 
@@ -211,9 +225,14 @@ async function run() {
                     paidAt: new Date(),
                 }
                 const result = await paymentsCollection.insertOne(paymentInfo);
+                console.log(result)
                 return res.send(result)
             }
-
+        })
+        // upayment get method 
+        app.get('/payment-user', async (req, res) => {
+            const result = await paymentsCollection.find().toArray();
+            res.send(result)
 
         })
 
