@@ -1,7 +1,7 @@
+require('dotenv').config();
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const express = require('express');
 const cors = require('cors');
-require('dotenv').config()
 const port = process.env.PORT || 5000;
 
 const stripe = require('stripe')(process.env.STRIPE_SECRETE);
@@ -58,7 +58,7 @@ const client = new MongoClient(uri, {
 async function run() {
     try {
         // Connect the client to the server	(optional starting in v4.7)
-        await client.connect();
+        // await client.connect();
         // Send a ping to confirm a successful connection
         const database = client.db('bloodDonation');
         const userCollection = database.collection('user');
@@ -162,13 +162,13 @@ async function run() {
 
         })
         // get single data 
-        app.get('/view-details/:id', async (req, res) => {
-            const { id } = req.params;
+        // app.get('/view-details/:id', async (req, res) => {
+        //     const { id } = req.params;
 
 
-            const result = await donationsCollection.findOne({ _id: new ObjectId(id) });
-            res.send(result);
-        });
+        //     const result = await donationsCollection.findOne({ _id: new ObjectId(id) });
+        //     res.send(result);
+        // });
 
 
         // payment api stripe 
@@ -239,7 +239,7 @@ async function run() {
 
 
 
-        await client.db("admin").command({ ping: 1 });
+        // await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
     } finally {
         // Ensures that the client will close when you finish/error
