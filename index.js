@@ -162,13 +162,13 @@ async function run() {
 
         })
         // get single data 
-        // app.get('/view-details/:id', async (req, res) => {
-        //     const { id } = req.params;
+        app.get('/view-details/:id', async (req, res) => {
+            const { id } = req.params;
 
 
-        //     const result = await donationsCollection.findOne({ _id: new ObjectId(id) });
-        //     res.send(result);
-        // });
+            const result = await donationsCollection.findOne({ _id: new ObjectId(id) });
+            res.send(result);
+        });
 
 
         // payment api stripe 
